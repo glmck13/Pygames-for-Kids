@@ -237,10 +237,9 @@ while True:
 			if LingerState:
 				LingerCount += 1
 				if LingerCount > MAX_LINGER:
-					if WordTxt:
-						WordTxt = ""
-						CardState = CARD_START
-						CardSurf.fill('black')
+					WordTxt = ""
+					CardState = CARD_START
+					CardSurf.fill('black')
 				elif LingerCount == MAX_LINGER:
 					WordTxt = WordTxt[:len(WordTxt)-1]
 					if CardSubindex > 0:
