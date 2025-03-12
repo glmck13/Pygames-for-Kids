@@ -145,19 +145,23 @@ MAX_LINGER = 2
 MAX_IDLE = 60*60*2
 IdleTicks = 0
 
-while True:
+Done = False
+while not Done:
+
 	for event in pygame.event.get():
 		#print(event, file=sys.stderr)
 		if event.type == USEREVENT:
 			IdleTicks += 1
 			if IdleTicks >= MAX_IDLE:
-				pygame.quit()
-				raise SystemExit
+				Done = True
+				break
 		else:
 			IdleTicks = 0
+
 		if event.type == QUIT:
-			pygame.quit()
-			raise SystemExit
+			Done = True
+			break
+
 		elif event.type == JOYHATMOTION:
 			quad = event.value
 			if quad[0] > 0:
@@ -168,13 +172,15 @@ while True:
 				move_cursor(-ALPHA_XTILES)
 			elif quad[1] < 0:
 				move_cursor(ALPHA_XTILES)
+
 		elif event.type == JOYDEVICEADDED:
 			joystick = pygame.joystick.Joystick(event.device_index)
 			joystick.init()
+
 		elif event.type == JOYBUTTONUP:
 			if event.button in (4, 5):
 				CardState = CARD_PROMPT
-			elif event.button in (0, 1, 2, 3):
+			elif event.button in (2, 3):
 				t = Tiles[Cursor]
 				c = t["letter"].lower()
 				if CardSubindex < 0 or CardSubindex >= len(Cards[CardIndex]["name"]):
@@ -186,6 +192,9 @@ while True:
 					play_prompt(PromptGotit)
 				else:
 					play_prompt(PromptTryAgain)
+			elif event.button in (0, 1):
+				Done = True
+				break
 			elif event.button == 6:
 				WordTxt = WordTxt[:len(WordTxt)-1]
 				if CardSubindex > 0:
@@ -296,3 +305,5 @@ while True:
 	elif CardState == CARD_WAIT:
 		if CardSubindex >= len(Cards[CardIndex]["name"]):
 			CardState = CARD_END
+
+pygame.quit()
