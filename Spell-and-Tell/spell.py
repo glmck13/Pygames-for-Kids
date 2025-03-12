@@ -116,19 +116,22 @@ MAX_LINGER = 2
 MAX_IDLE = 60*60*2
 IdleTicks = 0
 
-while True:
+Done = False
+while not Done:
 	for event in pygame.event.get():
 		#print(event, file=sys.stderr)
 		if event.type == USEREVENT:
 			IdleTicks += 1
 			if IdleTicks >= MAX_IDLE:
-				pygame.quit()
-				raise SystemExit
+				Done = True
+				break
 		else:
 			IdleTicks = 0
+
 		if event.type == QUIT:
-			pygame.quit()
-			raise SystemExit
+			Done = True
+			break
+
 		elif event.type == JOYHATMOTION:
 			quad = event.value
 			if quad[0] > 0:
@@ -139,16 +142,21 @@ while True:
 				move_cursor(-TILES_X)
 			elif quad[1] < 0:
 				move_cursor(TILES_X)
+
 		elif event.type == JOYDEVICEADDED:
 			joystick = pygame.joystick.Joystick(event.device_index)
 			joystick.init()
+
 		elif event.type == JOYBUTTONUP:
 			if event.button in (4, 5):
 				tts()
-			elif event.button in (0, 1, 2, 3):
+			elif event.button in (2, 3):
 				t = Tiles[Cursor]
 				WordTxt += t["letter"]
 				Sounds[t["letter"]].play()
+			elif event.button in (0, 1):
+				Done = True
+				break
 			elif event.button == 6:
 				WordTxt = WordTxt[:len(WordTxt)-1]
 			elif event.button == 7:
@@ -204,3 +212,5 @@ while True:
 
 	pygame.display.flip()
 	clock.tick(60)
+
+pygame.quit()
