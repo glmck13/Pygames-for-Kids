@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Pygames for Kids
+Comment=
+Icon=/home/pi/opt/Pygames-for-Kids/pygame.ico
+Exec=/home/pi/opt/Pygames-for-Kids/app.sh
+Type=Application
+Encoding=UTF-8
+Terminal=false
