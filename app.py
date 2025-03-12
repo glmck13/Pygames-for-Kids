@@ -49,8 +49,8 @@ def move_cursor (delta):
 Cursor = 0
 BORDER = 5
 
-# Terminate app if no activity in 60 minutes
-MAX_IDLE = 60*60*2
+# Terminate app if no activity in 30 minutes
+MAX_IDLE = 30*60*2
 IdleTicks = 0
 
 Done = False
