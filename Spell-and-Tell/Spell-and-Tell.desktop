@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Spell-and-Tell
-Comment=Learn how to pronounce new words
-Icon=/home/pi/opt/Spell-and-Tell/pygame.ico
-Exec=/home/pi/opt/Spell-and-Tell/spell.sh
-Type=Application
-Encoding=UTF-8
-Terminal=false
