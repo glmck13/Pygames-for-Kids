@@ -21,6 +21,9 @@ pygame.display.set_caption('Spell & Tell')
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 font = pygame.font.SysFont(None, 72)
+font_freetype = pygame.freetype.SysFont(None, 50)
+font_freetype.origin = True
+Ground = font_freetype.get_rect('|').y
 
 clock = pygame.time.Clock()
 heartbeat = pygame.event.Event(USEREVENT, mode="heartbeat")
@@ -63,6 +66,33 @@ def move_cursor(delta):
 		if Tiles[Cursor]:
 			break
 
+M_ADV_X = 4
+def blit_word (txt, pos = -1):
+	WordSurf.fill('black')
+	metrics = font_freetype.get_metrics(txt)
+	text_rect = font_freetype.get_rect(txt)
+	text_surf = pygame.Surface(WordRect.size)
+	x = 0
+	for (n, (c, met)) in enumerate(zip(txt, metrics)):
+		if n == pos:
+			color = 'green'
+		else:
+			color = 'white'
+		font_freetype.render_to(text_surf, (x, Ground), c, color)
+		x += met[M_ADV_X]
+	WordSurf.blit(text_surf, (TILE_PIX/2, TILE_PIX/2))
+
+def spell_word ():
+	for pos in range(0, len(WordTxt)):
+		blit_word(txt, pos)
+		Screen.blit(WordSurf, WordRect)
+		pygame.display.update(WordRect)
+		play_prompt(Sounds[WordTxt[pos].upper()])
+
+def play_prompt (sound):
+	sound.play()
+	pygame.time.wait(int(sound.get_length()*1000))
+
 SPEECH_FILE = "./sounds/say.ogg"
 SPEECH_VOICE = "Joanna"
 polly = boto3.client('polly')
@@ -74,12 +104,7 @@ def tts():
 		with open(SPEECH_FILE, 'wb') as f:
 			f.write(polly.synthesize_speech(Text=" spells " + WordTxt, OutputFormat='ogg_vorbis', VoiceId=SPEECH_VOICE).get('AudioStream').read())
 
-		for c in WordTxt:
-			pygame.time.wait(500)
-			Sounds[c].play()
-		else:
-			pygame.time.wait(500)
-
+		spell_word()
 		pygame.mixer.Sound(SPEECH_FILE).play()
 
 	except:
@@ -207,7 +232,7 @@ while not Done:
 	txt = WordTxt
 	if WordBlink:
 		txt += '|'
-	WordSurf.blit(font.render(txt, True, 'White'), (TILE_PIX/2, TILE_PIX/2))
+	blit_word(txt)
 	Screen.blit(WordSurf, WordRect)
 
 	pygame.display.flip()
